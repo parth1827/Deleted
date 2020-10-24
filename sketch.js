@@ -1,3 +1,6 @@
+var play = 1;
+var end = 0;
+var gameState = play;
 var ground;
 var monkey , monkey_running;
 var banana ,bananaImage, obstacle, obstacleImage;
@@ -39,7 +42,13 @@ function setup() {
 function draw() {
   background (220)
   
-  monkey.collide(ground);
+ 
+  if(obstacleGroup.collide(monkey)){
+    gameState = end
+  }
+  
+  if(gameState === play){
+    monkey.collide(ground);
   
   if(keyDown("space")){
     monkey.velocityY = -12
@@ -59,10 +68,31 @@ function draw() {
   survivalTime = Math.ceil(frameCount/frameRate());
   text("Survival Time : " + survivalTime,100,50);
   
-  if(FoodGroup.collide(monkey)){
-    score = score+1;
+    
+    
   }
- 
+  if(gameState ===  end ){
+    obstacleGroup.destroyEach();
+    FoodGroup.destroyEach();
+    monkey.destroy();
+    
+    score = 0;
+    survivalTime = 0;
+    
+    ground.velocityX = 0;
+    monkey.velocityY = 0;
+    
+    obstacleGroup.setLifetimeEach (-2);
+    FoodGroup.setLifetimeEach (-2);
+    
+    obstacleGroup.setVelocityXEach(0);
+    FoodGroup.setVelocityXEach(0);
+    
+  stroke("black");
+  textSize(20);
+  fill("black");
+  text("Game Over " ,280,300);
+  }
   if(frameCount % 80 === 0){
     
     var banana = createSprite(300,350,25,25);
@@ -81,7 +111,7 @@ function draw() {
     stone.addImage(obstacleImage);
     stone.scale = 0.5;
     stone.velocityX = -5;
-    stone.lifetime = 30;
+    stone.lifetime = 50;
     obstacleGroup.add(stone);
   }
 
